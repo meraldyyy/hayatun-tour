@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { Menu, X } from "lucide-react";
+
 
 // Impor default untuk menjamin kompatibilitas penuh dengan SSR Vite
 import * as LucideIcons from "lucide-react";
@@ -58,6 +60,12 @@ import a from "@/assets/a.png";
 import b from "@/assets/b.png";
 import c from "@/assets/c.png";
 
+import garuda from "@/assets/garuda.png";
+import saudia from "@/assets/saudia.jpeg";
+import emirates from "@/assets/emirates.png";
+import qatar from "@/assets/qatar.avif";
+import etihad from "@/assets/etihad.png";
+import turkish from "@/assets/turkissh.webp";
 
 const images = [
   heroKaaba,        
@@ -67,8 +75,11 @@ const images = [
 
 // 4. TERAKHIR, PANGGIL ROUTE NYA DI SINI
 export const Route = createFileRoute("/")({
+  
   component: Index, // Pastikan fungsi paling bawah file lu namanya 'Index' dan merender <Hero />
 });
+
+
 
 // ---------- Reusable primitives ----------
 function GoldButton({ children, variant = "solid", className = "", ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "solid" | "ghost" | "outline" }) {
@@ -179,20 +190,25 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
 
 // ---------- Sections ----------
 function Navbar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
+
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
   const links = [
-    { href: "#packages", label: "Paket" },
     { href: "#about", label: "Tentang Kami" },
-    { href: "#journey", label: "Journey" },
-    { href: "#gallery", label: "Gallery" },
+    { href: "#packages", label: "Haji & Umroh" },
+    { href: "#packages", label: "Wisata Halal" },
+    { href: "#gallery", label: "Galeri" },
     { href: "#faq", label: "FAQ" },
   ];
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
@@ -202,19 +218,41 @@ function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-        <a href="#top" className="flex items-center gap-2.5">
-          <span className={`grid h-15 w-15 place-items-center rounded-full ${scrolled ? "[background:var(--gradient-emerald)]" : "bg-white/15 backdrop-blur-md"}`}>
-            <img src="src/assets/logo.png" alt="Hayatun" className="h-15 w-15" />
+        {/* Logo */}
+        <a href="#top" className="flex items-center gap-3 shrink-0">
+          <span
+            className={`grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full ${
+              scrolled
+                ? "[background:var(--gradient-emerald)]"
+                : "bg-white/15 backdrop-blur-md"
+            }`}
+          >
+            <img
+              src={logo}
+              alt="Hayatun Tour"
+              className="h-full w-full object-contain"
+            />
           </span>
-          <span className={`font-display text-xl ${scrolled ? "text-navy" : "text-white"}`}>Hayatun Tour </span>
+
+          <span
+            className={`font-display text-xl ${
+              scrolled ? "text-navy" : "text-white"
+            }`}
+          >
+            Hayatun Tour
+          </span>
         </a>
+
+        {/* Desktop Menu */}
         <ul className="hidden items-center gap-9 lg:flex">
           {links.map((l) => (
             <li key={l.href}>
               <a
                 href={l.href}
                 className={`relative text-sm transition-colors after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all hover:after:w-full ${
-                  scrolled ? "text-navy/80 hover:text-emerald-deep" : "text-white/90 hover:text-white"
+                  scrolled
+                    ? "text-navy/80 hover:text-emerald-deep"
+                    : "text-white/90 hover:text-white"
                 }`}
               >
                 {l.label}
@@ -222,13 +260,54 @@ function Navbar() {
             </li>
           ))}
         </ul>
-        <GoldButton className="hidden sm:inline-flex">
-          Book Consultation <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-        </GoldButton>
+
+        {/* Desktop CTA */}
+        <div className="hidden lg:block">
+          <GoldButton>
+            Book Consultation
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </GoldButton>
+        </div>
+
+        {/* Mobile Hamburger */}
+        <button
+          type="button"
+          onClick={() => setMobileOpen((prev) => !prev)}
+          className={`flex h-11 w-11 items-center justify-center rounded-full transition-all lg:hidden ${
+            scrolled
+              ? "bg-emerald-deep text-white"
+              : "bg-white/15 text-white backdrop-blur-md"
+          }`}
+        >
+          {mobileOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
       </nav>
+
+      {/* Mobile Menu */}
+      {mobileOpen && (
+        <div className="border-t border-black/5 bg-white lg:hidden">
+          <div className="flex flex-col py-3">
+            {links.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="px-6 py-4 text-navy transition hover:bg-sand hover:text-emerald-deep"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 }
+
 
 
 
@@ -305,7 +384,7 @@ useEffect(() => {
   return (
     <section id="top" className="relative isolate min-h-[100svh] overflow-hidden">
 
-  {/* ================= BACKGROUND CAROUSEL ANTI-PATAH V3 ================= */}
+  {/* ================= BACKGROUND CAROUSEL V3 ================= */}
     <div className="absolute inset-0 -z-10 bg-black overflow-hidden pointer-events-none">
       
       {/* Layer Belakang: Menahan gambar sebelumnya biar pas transisi gak kosong/hitam */}
@@ -387,14 +466,25 @@ function TrustSection() {
     <section className="relative border-y border-border bg-[color:var(--sand)] py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
-          <Stat target={15} suffix="+" label="Years of Experience" />
-          <Stat target={10000} suffix="+" label="Pilgrims Served" />
-          <Stat target={98} suffix="%" label="Customer Satisfaction" />
-          <Stat target={100} suffix="%" label="Visa Assistance" />
+          <Stat target={15} suffix="+" label="Tahun Pengalaman" />
+          <Stat target={10000} suffix="+" label="Jamaah Dilayani" />
+          <Stat target={98} suffix="%" label="Tingkat Kepuasan" />
+          <Stat target={100} suffix="%" label="Pendampingan Visa" />
         </div>
+
         <div className="mt-16 flex flex-wrap items-center justify-center gap-x-14 gap-y-6 opacity-60">
-          {["IATA", "Ministry of Hajj", "Saudia", "Emirates", "Marriott", "Hilton"].map((p) => (
-            <span key={p} className="font-display text-lg tracking-wide text-navy/70">
+          {[
+            "Kemenag RI",
+            "IATA",
+            "Saudia",
+            "Garuda Indonesia",
+            "Hilton",
+            "Marriott",
+          ].map((p) => (
+            <span
+              key={p}
+              className="font-display text-lg tracking-wide text-navy/70"
+            >
               {p}
             </span>
           ))}
@@ -626,7 +716,20 @@ function Packages() {
               </article>
             </Reveal>
           ))}
+
+          
         </div>
+
+        <div className="mt-20 flex justify-center">
+          <a
+            href="/packages"
+            className="group inline-flex items-center gap-3 rounded-full bg-navy px-8 py-4 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+          >
+            Jelajahi Seluruh Paket
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </a>
+        </div>
+
       </div>
     </section>
   );
@@ -670,9 +773,9 @@ function WhyChoose() {
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
-            <SectionEyebrow>Why Choose Us</SectionEyebrow>
+            <SectionEyebrow>Kenapa Memilih Kami</SectionEyebrow>
             <h2 className="font-display text-4xl leading-tight text-navy sm:text-5xl">
-              A journey built on <span className="italic text-gold-gradient">trust & devotion</span>
+              Perjalanan yang dibangun dari <span className="italic text-gold-gradient">Kepercayaan</span>
             </h2>
           </Reveal>
         </div>
@@ -694,25 +797,52 @@ function WhyChoose() {
     </section>
   );
 }
-
 function Timeline() {
   const steps = [
-    { title: "Consultation", text: "A private conversation to understand your intention and needs." },
-    { title: "Registration", text: "Simple, transparent booking with a personal coordinator." },
-    { title: "Visa Processing", text: "We handle every document end-to-end." },
-    { title: "Flight Departure", text: "Assisted airport experience and smooth boarding." },
-    { title: "Arrival in Madinah", text: "VIP transfer and welcome to your five-star hotel." },
-    { title: "Umrah & Worship Guidance", text: "Scholars walk with you through every ritual." },
-    { title: "Return Home", text: "A calm, cared-for return with lasting memories." },
+    {
+      title: "Konsultasi",
+      text: "Percakapan pribadi untuk memahami niat dan kebutuhan Anda.",
+    },
+    {
+      title: "Pendaftaran",
+      text: "Proses pendaftaran yang mudah, transparan, dan didampingi oleh koordinator pribadi.",
+    },
+    {
+      title: "Pengurusan Visa",
+      text: "Kami mengurus seluruh dokumen perjalanan hingga selesai.",
+    },
+    {
+      title: "Keberangkatan",
+      text: "Pendampingan penuh di bandara hingga proses keberangkatan berjalan lancar.",
+    },
+    {
+      title: "Tiba di Madinah",
+      text: "Penjemputan eksklusif dan sambutan hangat menuju hotel berbintang lima.",
+    },
+    {
+      title: "Bimbingan Umrah & Ibadah",
+      text: "Pembimbing berpengalaman mendampingi setiap rangkaian ibadah Anda.",
+    },
+    {
+      title: "Kembali ke Tanah Air",
+      text: "Perjalanan pulang yang nyaman dengan kenangan spiritual yang tak terlupakan.",
+    },
   ];
+
   return (
-    <section id="journey" className="relative overflow-hidden bg-[color:var(--sand)] py-28 lg:py-36">
+    <section
+      id="journey"
+      className="relative overflow-hidden bg-[color:var(--sand)] py-28 lg:py-36"
+    >
       <div className="mx-auto max-w-5xl px-6">
         <div className="text-center">
           <Reveal>
-            <SectionEyebrow>The Journey</SectionEyebrow>
+            <SectionEyebrow>Perjalanan Anda</SectionEyebrow>
             <h2 className="font-display text-4xl leading-tight text-navy sm:text-5xl">
-              Seven steps to <span className="italic text-gold-gradient">the House of Allah</span>
+              Tujuh langkah menuju{" "}
+              <span className="italic text-gold-gradient">
+                Baitullah
+              </span>
             </h2>
           </Reveal>
         </div>
@@ -744,6 +874,75 @@ function Timeline() {
             ))}
           </ul>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function Airlines() {
+  const airlines = [
+    {
+      name: "Garuda Indonesia",
+      logo: garuda,
+    },
+    {
+      name: "Saudia",
+      logo: saudia,
+    },
+    {
+      name: "Emirates",
+      logo: emirates,
+    },
+    {
+      name: "Qatar Airways",
+      logo: qatar,
+    },
+    {
+      name: "Etihad Airways",
+      logo: etihad,
+    },
+    {
+      name: "Turkish Airlines",
+      logo: turkish,
+    },
+  ];
+
+  return (
+    <section className="relative overflow-hidden bg-white py-24 lg:py-32">
+      <div className="mx-auto max-w-7xl px-6">
+
+        <div className="mx-auto max-w-3xl text-center">
+          <SectionEyebrow>Maskapai Terpercaya</SectionEyebrow>
+
+          <h2 className="mt-4 font-display text-4xl text-navy sm:text-5xl">
+            Terbang bersama
+            <span className="italic text-gold-gradient">
+              {" "}maskapai terbaik
+            </span>
+          </h2>
+
+          <p className="mt-6 text-muted-foreground">
+            Kami bekerja sama dengan berbagai maskapai internasional
+            terpercaya untuk menghadirkan perjalanan Umrah yang nyaman,
+            aman, dan berkualitas.
+          </p>
+        </div>
+
+        <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-6">
+          {airlines.map((airline) => (
+            <div
+              key={airline.name}
+              className="group flex h-32 items-center justify-center rounded-3xl border border-border bg-white transition duration-300 hover:-translate-y-2 hover:border-gold/40 hover:shadow-xl"
+            >
+              <img
+                src={airline.logo}
+                alt={airline.name}
+                className="max-h-12 w-auto object-contain grayscale transition duration-300 group-hover:grayscale-0"
+              />
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );
@@ -795,40 +994,46 @@ function Gallery() {
 function Testimonials() {
   const reviews = [
     {
-      name: "Amina R.",
-      country: "United Kingdom",
-      text: "From the first call to the return flight, every detail was handled. Our guide made the rituals easy to understand and deeply moving.",
+      name: "Ahmad R.",
+      country: "Jakarta",
+      text: "Sejak konsultasi hingga kembali ke tanah air, semuanya berjalan dengan sangat baik. Pembimbing kami menjelaskan setiap rangkaian ibadah dengan jelas sehingga pengalaman umrah terasa lebih khusyuk dan bermakna.",
       rating: 5,
     },
     {
-      name: "Yusuf K.",
-      country: "Canada",
-      text: "The hotel was steps from the Haram and the staff was extraordinary. Sakina truly treats you like family.",
+      name: "Siti A.",
+      country: "Bandung",
+      text: "Hotel yang nyaman, dekat dengan Masjidil Haram, serta pelayanan yang sangat ramah. Benar-benar membuat kami merasa seperti keluarga sendiri.",
       rating: 5,
     },
     {
-      name: "Fatima H.",
-      country: "Malaysia",
-      text: "I travelled with my elderly parents. The care and attention we received was beyond anything we expected. Truly a spiritual experience.",
+      name: "Muhammad F.",
+      country: "Surabaya",
+      text: "Saya berangkat bersama kedua orang tua yang sudah lanjut usia. Seluruh tim sangat membantu dan selalu sigap memberikan pendampingan. Perjalanan ibadah yang tidak akan kami lupakan.",
       rating: 5,
     },
   ];
+
   const [idx, setIdx] = useState(0);
+
   useEffect(() => {
     const t = setInterval(() => setIdx((i) => (i + 1) % reviews.length), 6000);
     return () => clearInterval(t);
   }, [reviews.length]);
+
   const r = reviews[idx];
+
   return (
     <section className="relative overflow-hidden bg-[color:var(--sand)] py-28 lg:py-36">
       <div className="mx-auto max-w-4xl px-6 text-center">
         <Reveal>
-          <SectionEyebrow>Testimonials</SectionEyebrow>
+          <SectionEyebrow>Testimoni</SectionEyebrow>
           <h2 className="font-display text-4xl leading-tight text-navy sm:text-5xl">
-            Stories from <span className="italic text-gold-gradient">our pilgrims</span>
+            Cerita dari{" "}
+            <span className="italic text-gold-gradient">
+              para jamaah kami
+            </span>
           </h2>
         </Reveal>
-
         <Reveal delay={120}>
           <div className="relative mt-14 rounded-[2rem] border border-border bg-white p-10 shadow-[var(--shadow-soft)] sm:p-14">
             <Quote className="mx-auto h-8 w-8 text-gold" />
@@ -872,22 +1077,45 @@ function Testimonials() {
 
 function FAQ() {
   const faqs = [
-    { q: "What documents do I need for a Hajj or Umrah visa?", a: "A passport valid for at least six months, biometric photos, and a completed application. We handle the entire visa process, including the mahram documentation where required." },
-    { q: "How close are the hotels to the Haramain?", a: "Our Signature and Hajj Excellence hotels are within a short walk of Masjid al-Haram and Masjid Nabawi. Many rooms offer direct views of the Haram." },
-    { q: "Are flights included in the packages?", a: "Yes, all listed packages include return international flights. Business class and premium economy upgrades are available on request." },
-    { q: "What payment options are available?", a: "We accept international cards and bank transfers, and offer interest-free installment plans up to 12 months." },
-    { q: "What is your cancellation policy?", a: "Full refunds are available up to 60 days before departure. Between 30 and 60 days, a partial refund applies. Terms are clearly outlined in your booking agreement." },
-    { q: "Do you provide guides in multiple languages?", a: "Yes. Our mutawwifs speak English, Arabic, Urdu, French, and Bahasa. Additional languages can be arranged in advance." },
+    {
+      q: "Dokumen apa saja yang diperlukan untuk mengurus visa Umrah?",
+      a: "Anda hanya perlu menyiapkan paspor yang masih berlaku minimal enam bulan, foto sesuai ketentuan, serta dokumen pendukung lainnya. Seluruh proses pengurusan visa akan kami bantu hingga selesai.",
+    },
+    {
+      q: "Seberapa dekat lokasi hotel dengan Masjidil Haram dan Masjid Nabawi?",
+      a: "Kami menyediakan hotel yang berlokasi sangat dekat dengan Masjidil Haram dan Masjid Nabawi, sehingga memudahkan Anda untuk beribadah dengan nyaman. Beberapa pilihan kamar juga menawarkan pemandangan langsung ke area masjid.",
+    },
+    {
+      q: "Apakah tiket pesawat sudah termasuk dalam paket?",
+      a: "Ya, seluruh paket yang kami tawarkan sudah termasuk tiket pesawat pulang pergi. Tersedia juga pilihan upgrade ke kelas bisnis atau premium sesuai kebutuhan Anda.",
+    },
+    {
+      q: "Metode pembayaran apa saja yang tersedia?",
+      a: "Kami menerima pembayaran melalui transfer bank, kartu kredit/debit, serta menyediakan pilihan cicilan sesuai ketentuan yang berlaku.",
+    },
+    {
+      q: "Bagaimana kebijakan pembatalan perjalanan?",
+      a: "Ketentuan pembatalan disesuaikan dengan waktu pengajuan serta kebijakan maskapai dan hotel. Seluruh informasi akan dijelaskan secara transparan pada saat proses pemesanan.",
+    },
+    {
+      q: "Apakah tersedia pembimbing ibadah selama perjalanan?",
+      a: "Ya. Setiap keberangkatan didampingi oleh pembimbing ibadah (muthawif) yang berpengalaman untuk membimbing seluruh rangkaian ibadah Umrah agar lebih nyaman dan khusyuk.",
+    },
   ];
+
   const [open, setOpen] = useState<number | null>(0);
+
   return (
     <section id="faq" className="relative py-28 lg:py-36">
       <div className="mx-auto max-w-4xl px-6">
         <div className="text-center">
           <Reveal>
-            <SectionEyebrow>Frequently Asked</SectionEyebrow>
+            <SectionEyebrow>Pertanyaan Umum</SectionEyebrow>
             <h2 className="font-display text-4xl leading-tight text-navy sm:text-5xl">
-              Everything you'd like to <span className="italic text-gold-gradient">know</span>
+              Semua yang perlu Anda{" "}
+              <span className="italic text-gold-gradient">
+                ketahui
+              </span>
             </h2>
           </Reveal>
         </div>
@@ -928,7 +1156,7 @@ function CTA() {
       <div className="absolute inset-0 -z-10">
         <img
           src={ctaKaabaNight}
-          alt="Kaaba at night surrounded by pilgrims"
+          alt="Ka'bah pada malam hari dikelilingi jamaah"
           width={1920}
           height={1080}
           loading="lazy"
@@ -936,26 +1164,35 @@ function CTA() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/80 via-navy/70 to-navy/90" />
       </div>
+
       <div className="mx-auto max-w-4xl px-6 text-center text-white">
         <Reveal>
           <SectionEyebrow>
-            <span className="text-gold-soft">Begin now</span>
+            <span className="text-gold-soft">Mulai Hari Ini</span>
           </SectionEyebrow>
+
           <h2 className="font-display text-4xl leading-tight text-white sm:text-6xl">
-            Your journey to the House of Allah
+            Perjalanan Anda menuju
             <br />
-            <span className="italic text-gold-gradient">starts here</span>
+            <span className="italic text-gold-gradient">
+              Baitullah dimulai di sini
+            </span>
           </h2>
+
           <p className="mx-auto mt-6 max-w-xl text-white/80">
-            Speak with a Sakina consultant today. We'll craft a pilgrimage as personal as your
-            intention.
+            Konsultasikan rencana ibadah Anda bersama tim kami. Kami siap
+            membantu Anda memilih paket Umrah yang paling sesuai dengan
+            kebutuhan dan harapan Anda.
           </p>
+
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <GoldButton>
-              Schedule Free Consultation <ArrowRight className="h-4 w-4" />
+              Jadwalkan Konsultasi Gratis{" "}
+              <ArrowRight className="h-4 w-4" />
             </GoldButton>
+
             <GoldButton variant="outline">
-              <MessageCircle className="h-4 w-4" /> WhatsApp Us
+              <MessageCircle className="h-4 w-4" /> Hubungi via WhatsApp
             </GoldButton>
           </div>
         </Reveal>
@@ -964,38 +1201,52 @@ function CTA() {
   );
 }
 
+import { FaInstagram, FaFacebookF, FaYoutube } from "react-icons/fa";
 function Footer() {
+  const socials = [
+  { icon: FaInstagram, href: "#" },
+  { icon: FaFacebookF, href: "#" },
+  { icon: FaYoutube, href: "#" },
+];
   return (
     <footer className="relative bg-navy text-white/80">
       <div className="mx-auto grid max-w-7xl gap-14 px-6 py-20 lg:grid-cols-4 lg:px-10">
         <div>
          <div className="flex items-center gap-2.5">
           {/* Pembungkus lingkaran tetap dipertahankan, isinya diganti tag img */}
-          <span className="grid h-20 w-20 place-items-center rounded-full [background:var(--gradient-gold)] overflow-hidden">
-            <img 
-              src={logo} 
-              alt="Hayatun Tour Logo Icon" 
-              className="h-full w-full object-contain p-1" 
-            />
-          </span>
-          <span className="font-display text-2xl text-white">Hayatun Tour</span>
-        </div>
-          <p className="mt-5 max-w-xs text-sm leading-relaxed">
-            Premium Hajj & Umrah pilgrimages crafted with devotion, hospitality, and care since 2010.
-          </p>
-          <div className="mt-6 flex gap-3">
-            {[Instagram, Facebook, Youtube].map((Icon, i) => (
-              <a key={i} href="#" className="grid h-10 w-10 place-items-center rounded-full border border-white/15 transition hover:border-gold hover:text-gold">
-                <Icon className="h-4 w-4" />
+             <a href="#top" className="flex items-center gap-3 shrink-0">
               </a>
-            ))}
-          </div>
+            <img
+              src={logo}
+              alt="Hayatun Tour"
+              className="h-20 w-20 w-full object-contain"
+            />
+
+          <span className="font-display text-2xl text-white">Hayatun Tour</span>
+            </div>
+
+            <p className="mt-5 max-w-xs text-sm leading-relaxed">
+              Menemani perjalanan ibadah Umrah dengan pelayanan terbaik, pendampingan
+              profesional, serta kenyamanan di setiap langkah sejak tahun 2010.
+            </p>
+
+            <div className="mt-6 flex gap-3">
+              {socials.map(({ icon: Icon, href }, i) => (
+                <a
+                  key={i}
+                  href={href}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/15 transition hover:border-gold hover:text-gold"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
         </div>
 
         <div>
           <h4 className="font-display text-lg text-white">Explore</h4>
           <ul className="mt-5 space-y-3 text-sm">
-            {["Umrah Packages", "Hajj Packages", "Journey", "Gallery", "FAQ"].map((l) => (
+            {["Tentang Kami", "Haji & Umroh", "Wisata Halal", "Galeri", "FAQ"].map((l) => (
               <li key={l}><a href="#" className="hover:text-gold">{l}</a></li>
             ))}
           </ul>
@@ -1007,54 +1258,107 @@ function Footer() {
             <li className="flex items-center gap-3"><Phone className="h-4 w-4 text-gold" /> +1 (800) 555-0142</li>
             <li className="flex items-center gap-3"><MessageCircle className="h-4 w-4 text-gold" /> WhatsApp: +1 (800) 555-0142</li>
             <li className="flex items-center gap-3"><Mail className="h-4 w-4 text-gold" /> hello@hayatuntour.com</li>
-            <li className="flex items-center gap-3"><MapPin className="h-4 w-4 text-gold" /> London · Dubai · Kuala Lumpur</li>
+            <li className="flex items-center gap-3"><MapPin className="h-4 w-4 text-gold" /> Jakarta, Indonesia</li>
           </ul>
         </div>
 
         <div>
           <h4 className="font-display text-lg text-white">Newsletter</h4>
-          <p className="mt-5 text-sm">Receive quiet updates on upcoming departures and package openings.</p>
+
+          <p className="mt-5 text-sm">
+            Dapatkan informasi terbaru mengenai jadwal keberangkatan, promo, dan
+            pembukaan paket Umrah langsung melalui email Anda.
+          </p>
+
           <form className="mt-5 flex overflow-hidden rounded-full border border-white/15 bg-white/5 backdrop-blur">
             <input
               type="email"
-              placeholder="Your email"
+              placeholder="Masukkan email Anda"
               className="flex-1 bg-transparent px-5 py-3 text-sm text-white placeholder:text-white/50 focus:outline-none"
             />
-            <button className="px-5 text-sm text-navy [background:var(--gradient-gold)]">Join</button>
+            <button className="px-5 text-sm text-navy [background:var(--gradient-gold)]">
+              Daftar
+            </button>
           </form>
         </div>
       </div>
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-6 text-xs text-white/50 sm:flex-row lg:px-10">
-          <span>© {new Date().getFullYear()} Hayatun Tour. All rights reserved.</span>
-          <span>Licensed by the Ministry of Hajj & Umrah</span>
+          <span>
+            © {new Date().getFullYear()} Hayatun Tour. Seluruh hak cipta dilindungi.
+          </span>
+
+          <span>Travel Umrah Resmi & Berizin di Indonesia</span>
         </div>
       </div>
     </footer>
   );
 }
 
-function FloatingActions() {
+import { FaWhatsapp } from "react-icons/fa";
+
+function FloatingActions({ show }: { show: boolean }) {
   return (
-    <>
-      <a
-        href="#"
-        aria-label="Chat on WhatsApp"
-        className="fixed bottom-6 right-6 z-40 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-[var(--shadow-elegant)] transition-transform hover:-translate-y-0.5"
-      >
-        <MessageCircle className="h-6 w-6" />
-      </a>
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-white/95 p-3 backdrop-blur-xl sm:hidden">
-        <EmeraldButton className="w-full">
-          Book Free Consultation <ArrowRight className="h-4 w-4" />
-        </EmeraldButton>
-      </div>
-    </>
+    <a
+      href="https://wa.me/62812xxxxxxxxxx"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`
+        fixed z-50
+        bottom-8
+        left-1/2 -translate-x-1/2
+
+        flex items-center justify-center
+        rounded-full
+        bg-[#25D366]
+        text-white
+        shadow-2xl
+
+        transition-all duration-500
+
+        ${
+          show
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-8 opacity-0"
+        }
+
+        w-[calc(100%-32px)] h-16 max-w-md
+
+        md:left-auto
+        md:right-6
+        md:translate-x-0
+        md:w-16
+        md:h-16
+        md:max-w-none
+
+        hover:scale-105
+      `}
+    >
+      <FaWhatsapp className="h-8 w-8 md:h-9 md:w-9" />
+    </a>
   );
 }
 
 function Index() {
+  const [showMobileCTA, setShowMobileCTA] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowMobileCTA(window.scrollY > 280);
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <main className="bg-background text-foreground">
       <Navbar />
@@ -1064,12 +1368,15 @@ function Index() {
       <Packages />
       <WhyChoose />
       <Timeline />
+      <Airlines/>
       <Gallery />
       <Testimonials />
       <FAQ />
       <CTA />
       <Footer />
-      <FloatingActions />
+
+      {/* Floating CTA */}
+      <FloatingActions show={showMobileCTA} />
     </main>
   );
 }
