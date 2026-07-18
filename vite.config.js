@@ -1,13 +1,16 @@
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import path from "path";
 
 export default defineConfig({
-  tanstackStart: {
-    server: { 
-      entry: "server",
-      target: "vercel" // <--- TAMBAHKAN BARIS INI
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
-  },
-  define: {
-    global: "globalThis",
   },
 });
